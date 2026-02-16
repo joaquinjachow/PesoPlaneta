@@ -1,5 +1,5 @@
 "use client";
-
+import { useTheme } from 'next-themes';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { ChartData, WeightChartProps, TooltipProps } from '@/lib/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,7 +22,12 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
   return null;
 };
 
+const AXIS_COLOR_LIGHT = '#7c3aed';
+const AXIS_COLOR_DARK = 'white';
+
 export function WeightChart({ data, unit }: WeightChartProps) {
+  const { resolvedTheme } = useTheme();
+  const axisColor = resolvedTheme === 'dark' ? AXIS_COLOR_DARK : AXIS_COLOR_LIGHT;
   if (!data || data.length === 0) {
     return null;
   }
@@ -65,7 +70,7 @@ export function WeightChart({ data, unit }: WeightChartProps) {
                 textAnchor="end"
                 height={60}
                 fontSize={12}
-                tick={{ fill: 'white' }}
+                tick={{ fill: axisColor }}
                 axisLine={{ stroke: 'hsl(var(--border))' }}
                 tickLine={{ stroke: 'hsl(var(--border))' }}
               />
@@ -74,10 +79,10 @@ export function WeightChart({ data, unit }: WeightChartProps) {
                   value: `Peso (${unit})`, 
                   angle: -90, 
                   position: 'insideLeft',
-                  style: { textAnchor: 'middle', fill: 'white' }
+                  style: { textAnchor: 'middle', fill: axisColor }
                 }}
                 fontSize={12}
-                tick={{ fill: 'white' }}
+                tick={{ fill: axisColor }}
                 axisLine={{ stroke: 'hsl(var(--border))' }}
                 tickLine={{ stroke: 'hsl(var(--border))' }}
               />
