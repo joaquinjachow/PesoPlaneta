@@ -1,5 +1,4 @@
 "use client";
-
 import { Github, Linkedin, Heart, Rocket, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -67,7 +66,7 @@ export function CreativeFooter() {
             {/* Información adicional */}
             <div className="pt-4 border-t border-border/50">
               <p className="text-xs text-muted-foreground">
-                © 2025 Calculadora de Peso Planetario • Desarrollado con Next.js, TypeScript y Tailwind CSS
+                © 2026 Calculadora de Peso Planetario • Desarrollado con Next.js, TypeScript y Tailwind CSS
               </p>
               <p className="text-xs text-muted-foreground mt-1">
                 Explora el universo, descubre la gravedad, calcula tu peso en cualquier planeta
