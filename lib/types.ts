@@ -16,6 +16,7 @@ export interface WeightResult {
 }
 
 export interface WeightCalculation {
+  id?: string;
   inputWeight: number;
   unit: 'kg' | 'lbs';
   results: WeightResult[];
@@ -29,12 +30,17 @@ export interface ValidationError {
 
 export type WeightUnit = 'kg' | 'lbs';
 
+export type SortByOption = 'weight' | 'name';
+export type SortDirection = 'asc' | 'desc';
+
 export interface ChartData {
   name: string;
   weight: number;
+  weightKg?: number;
   gravity: number;
   emoji: string;
   color: string;
+  objectComparison?: ObjectComparisonResult | null;
 }
 
 export interface WeightChartProps {
@@ -48,20 +54,20 @@ export interface CalculationHistoryProps {
   formatWeight: (weight: number, unit: string) => string;
 }
 
-export interface LazyWrapperProps {
-  children: React.ReactNode;
-  fallback?: React.ReactNode;
-}
-
 export interface CompactPlanetFiltersProps {
   filters: PlanetFilter;
   onFilterChange: (planetName: string, checked: boolean) => void;
   onResetFilters: () => void;
 }
 
+export interface ChartTooltipPayloadItem {
+  value?: number;
+  payload: ChartData & { unit?: string };
+}
+
 export interface TooltipProps {
   active?: boolean;
-  payload?: any[];
+  payload?: ChartTooltipPayloadItem[];
   label?: string;
 }
 
