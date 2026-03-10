@@ -4,38 +4,38 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: oklch(0.05 0.02 240);
-  --foreground: oklch(0.98 0.01 240);
-  --card: oklch(0.08 0.03 240);
-  --card-foreground: oklch(0.95 0.01 240);
-  --popover: oklch(0.08 0.03 240);
-  --popover-foreground: oklch(0.95 0.01 240);
-  --primary: oklch(0.65 0.25 280); /* Cosmic purple */
+  --background: oklch(0.98 0.01 240);
+  --foreground: oklch(0.05 0.02 240);
+  --card: oklch(0.95 0.02 240);
+  --card-foreground: oklch(0.05 0.02 240);
+  --popover: oklch(0.95 0.02 240);
+  --popover-foreground: oklch(0.05 0.02 240);
+  --primary: oklch(0.65 0.25 280);
   --primary-foreground: oklch(0.98 0.01 240);
-  --secondary: oklch(0.15 0.05 240); /* Dark space blue */
-  --secondary-foreground: oklch(0.95 0.01 240);
-  --muted: oklch(0.12 0.04 240);
-  --muted-foreground: oklch(0.7 0.02 240);
-  --accent: oklch(0.7 0.3 320); /* Bright cosmic pink */
+  --secondary: oklch(0.9 0.05 240);
+  --secondary-foreground: oklch(0.05 0.02 240);
+  --muted: oklch(0.85 0.04 240);
+  --muted-foreground: oklch(0.3 0.02 240);
+  --accent: oklch(0.7 0.3 320);
   --accent-foreground: oklch(0.98 0.01 240);
-  --destructive: oklch(0.6 0.25 15); /* Mars red */
+  --destructive: oklch(0.6 0.25 15);
   --destructive-foreground: oklch(0.98 0.01 240);
-  --border: oklch(0.2 0.05 240);
-  --input: oklch(0.12 0.04 240);
+  --border: oklch(0.8 0.05 240);
+  --input: oklch(0.9 0.04 240);
   --ring: oklch(0.65 0.25 280);
-  --chart-1: oklch(0.65 0.25 280); /* Purple */
-  --chart-2: oklch(0.7 0.3 320); /* Pink */
-  --chart-3: oklch(0.6 0.2 200); /* Blue */
-  --chart-4: oklch(0.7 0.25 60); /* Gold */
-  --chart-5: oklch(0.6 0.25 15); /* Red */
+  --chart-1: oklch(0.65 0.25 280);
+  --chart-2: oklch(0.7 0.3 320);
+  --chart-3: oklch(0.6 0.2 200);
+  --chart-4: oklch(0.7 0.25 60);
+  --chart-5: oklch(0.6 0.25 15);
   --radius: 0.75rem;
-  --sidebar: oklch(0.08 0.03 240);
-  --sidebar-foreground: oklch(0.95 0.01 240);
+  --sidebar: oklch(0.95 0.02 240);
+  --sidebar-foreground: oklch(0.05 0.02 240);
   --sidebar-primary: oklch(0.65 0.25 280);
   --sidebar-primary-foreground: oklch(0.98 0.01 240);
-  --sidebar-accent: oklch(0.15 0.05 240);
-  --sidebar-accent-foreground: oklch(0.95 0.01 240);
-  --sidebar-border: oklch(0.2 0.05 240);
+  --sidebar-accent: oklch(0.9 0.05 240);
+  --sidebar-accent-foreground: oklch(0.05 0.02 240);
+  --sidebar-border: oklch(0.8 0.05 240);
   --sidebar-ring: oklch(0.65 0.25 280);
 }
 
@@ -56,7 +56,10 @@
   --accent-foreground: oklch(0.03 0.02 240);
   --destructive: oklch(0.65 0.3 15);
   --destructive-foreground: oklch(0.98 0.01 240);
-  --border: oklch(0.15 0.04 240);
+  --star-color: oklch(0.88 0.12 280);
+  --star-opacity: 0.7;
+  --star-glow: 0 0 8px oklch(0.85 0.15 280 / 0.4);
+  --border: oklch(0.35 0.04 240);
   --input: oklch(0.1 0.03 240);
   --ring: oklch(0.7 0.3 280);
 }
@@ -141,17 +144,28 @@
 
 .starfield {
   position: fixed;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: -1;
+  z-index: 0;
+}
+
+html:not(.dark) .starfield {
+  visibility: hidden;
+  opacity: 0;
+}
+
+.dark .starfield {
+  visibility: visible;
+  opacity: 1;
 }
 
 .star {
   position: absolute;
-  background: white;
   border-radius: 50%;
-  animation: twinkle 3s ease-in-out infinite;
+  background: var(--star-color);
+  opacity: var(--star-opacity);
+  box-shadow: var(--star-glow);
+  animation: twinkle 2s ease-in-out infinite;
 }
