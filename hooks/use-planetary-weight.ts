@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
-import { WeightResult, WeightUnit, ValidationError, WeightCalculation, PlanetFilter, ObjectComparisonResult } from '@/lib/types';
+import { WeightResult, WeightUnit, ValidationError, WeightCalculation, PlanetFilter, ObjectComparisonResult, SortByOption, SortDirection } from '@/lib/types';
 import { PLANETS, WEIGHT_LIMITS, CONVERSION_FACTORS, EVERYDAY_OBJECTS } from '@/lib/constants';
 
 export const usePlanetaryWeight = () => {
@@ -8,6 +8,8 @@ export const usePlanetaryWeight = () => {
   const [results, setResults] = useState<WeightResult[]>([]);
   const [validationError, setValidationError] = useState<ValidationError | null>(null);
   const [calculationHistory, setCalculationHistory] = useState<WeightCalculation[]>([]);
+  const [sortBy, setSortBy] = useState<SortByOption>('weight');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
   const [planetFilters, setPlanetFilters] = useState<PlanetFilter>(() => {
     const initialFilters: PlanetFilter = {};
     PLANETS.forEach(planet => {
@@ -68,12 +70,13 @@ export const usePlanetaryWeight = () => {
     }));
     setResults(newResults);
     const newCalculation: WeightCalculation = {
+      id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `calc-${Date.now()}-${inputWeight}-${unit}`,
       inputWeight,
       unit,
       results: newResults,
       timestamp: new Date(),
     };
-    setCalculationHistory(prev => [newCalculation, ...prev.slice(0, 9)]); // Mantener solo 10 cálculos
+    setCalculationHistory(prev => [newCalculation, ...prev.slice(0, 9)]);
   }, [weight, unit, validateWeight]);
 
   const clearResults = useCallback(() => {
@@ -90,20 +93,8 @@ export const usePlanetaryWeight = () => {
     const unitText = displayUnit === 'kg' ? 'kg' : 'lbs';
     return `${convertedWeight.toFixed(2)} ${unitText}`;
   }, [convertWeight]);
-  const filteredResults = useMemo(() => {
-    return results.filter(result => planetFilters[result.planet]);
-  }, [results, planetFilters]);
-  const chartData = useMemo(() => {
-    return filteredResults.map(result => ({
-      name: result.planet,
-      weight: convertWeight(result.weight, unit),
-      gravity: result.gravity,
-      emoji: result.emoji,
-      color: result.color,
-    }));
-  }, [filteredResults, unit, convertWeight]);
 
-  const getObjectComparison = useCallback((planetWeight: number, planetName: string): ObjectComparisonResult | null => {
+  const getObjectComparison = useCallback((planetWeight: number, _planetName: string): ObjectComparisonResult | null => {
     const targetWeight = convertWeight(planetWeight, unit);
     let closestObject = EVERYDAY_OBJECTS[0] as typeof EVERYDAY_OBJECTS[0];
     let minDifference = Math.abs(targetWeight - closestObject.weight);
@@ -124,6 +115,27 @@ export const usePlanetaryWeight = () => {
     return null;
   }, [unit, convertWeight]);
 
+  const filteredResults = useMemo(() => {
+    const filtered = results.filter(result => planetFilters[result.planet]);
+    const mult = sortDirection === 'asc' ? 1 : -1;
+    const sorted = [...filtered].sort((a, b) => {
+      if (sortBy === 'name') return mult * a.planet.localeCompare(b.planet);
+      return mult * (a.weight - b.weight);
+    });
+    return sorted;
+  }, [results, planetFilters, sortBy, sortDirection]);
+  const chartData = useMemo(() => {
+    return filteredResults.map(result => ({
+      name: result.planet,
+      weight: convertWeight(result.weight, unit),
+      weightKg: result.weight,
+      gravity: result.gravity,
+      emoji: result.emoji,
+      color: result.color,
+      objectComparison: getObjectComparison(result.weight, result.planet),
+    }));
+  }, [filteredResults, unit, convertWeight, getObjectComparison]);
+
   const handleFilterChange = useCallback((planetName: string, checked: boolean) => {
     setPlanetFilters(prev => ({
       ...prev,
@@ -143,9 +155,14 @@ export const usePlanetaryWeight = () => {
     weight,
     unit,
     results: filteredResults,
+    unfilteredResultsLength: results.length,
     validationError,
     calculationHistory,
     planetFilters,
+    sortBy,
+    setSortBy,
+    sortDirection,
+    setSortDirection,
     setWeight,
     setUnit,
     calculateWeights,
@@ -153,7 +170,6 @@ export const usePlanetaryWeight = () => {
     clearHistory,
     formatWeight,
     chartData,
-    validateWeight,
     handleFilterChange,
     resetFilters,
     getObjectComparison,
