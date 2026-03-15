@@ -1,21 +1,43 @@
 "use client";
 import { useTheme } from 'next-themes';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { ChartData, WeightChartProps, TooltipProps } from '@/lib/types';
+import { WeightChartProps, TooltipProps } from '@/lib/types';
+import { CONVERSION_FACTORS } from '@/lib/constants';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart3 } from 'lucide-react';
 
 const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
   if (active && payload && payload.length) {
+    const data = payload[0].payload;
+    const comparison = data.objectComparison;
     return (
-      <div className="bg-card border border-border rounded-lg p-3 shadow-lg backdrop-blur-sm">
-        <p className="font-semibold text-foreground">{`${label}`}</p>
-        <p className="text-primary font-medium">
-          {`Peso: ${payload[0].value.toFixed(2)} ${payload[0].payload.unit || 'kg'}`}
+      <div className="bg-card border border-border rounded-lg p-3 shadow-lg backdrop-blur-sm min-w-[180px]">
+        <p className="font-semibold text-foreground flex items-center gap-1.5">
+          <span>{data.emoji}</span>
+          {label}
+        </p>
+        <p className="text-primary font-medium mt-1">
+          Peso: {payload[0].value != null ? Number(payload[0].value).toFixed(2) : '—'} {data.unit || 'kg'}
         </p>
         <p className="text-muted-foreground text-sm">
-          {`Gravedad: ${payload[0].payload.gravity}x`}
+          Gravedad: {data.gravity}x
         </p>
+        {comparison && (
+          <div className="mt-2 pt-2 border-t border-border">
+            <p className="text-foreground text-sm font-medium">
+              ≈ {comparison.equivalent.toFixed(1)} {comparison.object.emoji}
+            </p>
+            <p className="text-muted-foreground text-xs">
+              {comparison.object.name}
+            </p>
+            <p className="text-muted-foreground text-xs mt-0.5">
+              Referencia: {data.unit === 'lbs'
+                ? (comparison.object.weight * CONVERSION_FACTORS.KG_TO_LBS).toFixed(1)
+                : comparison.object.weight.toFixed(0)}{' '}
+              {data.unit || 'kg'}
+            </p>
+          </div>
+        )}
       </div>
     );
   }
@@ -97,14 +119,12 @@ export function WeightChart({ data, unit }: WeightChartProps) {
                     'cyan': '#06b6d4',
                     'gray': '#6b7280',
                   };
-                  
                   const colorKey = entry.color
                     .replace('bg-', '')
                     .replace('-500', '')
                     .replace('-600', '')
                     .replace('-400', '')
                     .replace('-300', '');
-                  
                   return (
                     <Cell 
                       key={`cell-${index}`} 
