@@ -29,7 +29,17 @@ export const metadata: Metadata = {
     canonical: '/',
   },
   icons: {
-    icon: [{ url: '/icon.svg', type: 'image/svg+xml', sizes: 'any' }],
+    icon: [
+      { url: '/icon.svg', type: 'image/svg+xml', sizes: 'any' },
+      { url: '/icon-192.png', type: 'image/png', sizes: '192x192' },
+      { url: '/icon-512.png', type: 'image/png', sizes: '512x512' },
+    ],
+    apple: '/icon-192.png',
+  },
+  appleWebApp: {
+    capable: true,
+    title: 'Peso Planetario',
+    statusBarStyle: 'black-translucent',
   },
   manifest: '/manifest.json',
   themeColor: [
