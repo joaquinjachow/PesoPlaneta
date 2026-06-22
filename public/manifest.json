@@ -1,13 +1,16 @@
 {
+  "id": "/",
   "name": "Peso Planetario",
   "short_name": "Peso Planetario",
   "description": "Calculadora de peso en otros planetas del sistema solar. Descubre cuánto pesarías en Mercurio, Venus, Marte, Júpiter y más.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#030712",
   "theme_color": "#7c3aed",
   "orientation": "portrait-primary",
   "lang": "es",
+  "categories": ["utilities", "education"],
   "icons": [
     {
       "src": "/icon.svg",
@@ -26,6 +29,27 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Peso Planetario - Calculadora de peso en planetas"
     }
   ]
 }

@@ -1,9 +1,14 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { toast } from 'sonner'
 
 const INSTALL_HINT_KEY = 'pwa-install-hint-shown'
+
+interface BeforeInstallPromptEvent extends Event {
+  prompt(): Promise<void>
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>
+}
 
 function isStandalone(): boolean {
   return (
@@ -20,25 +25,28 @@ function isIOS(): boolean {
   )
 }
 
-function isAndroid(): boolean {
-  return /Android/i.test(window.navigator.userAgent)
+function isSafari(): boolean {
+  const ua = window.navigator.userAgent
+  return /Safari/.test(ua) && !/CriOS|FxiOS|OPiOS|EdgiOS|Chrome/.test(ua)
 }
 
-function showInstallHint(description: string) {
+function showInstallHint(description: string, actionLabel = 'Entendido', onAction?: () => void) {
   if (sessionStorage.getItem(INSTALL_HINT_KEY)) return
   sessionStorage.setItem(INSTALL_HINT_KEY, '1')
 
   toast.info('Instalable', {
     description,
-    duration: 8000,
+    duration: 10000,
     action: {
-      label: 'Entendido',
-      onClick: () => {},
+      label: actionLabel,
+      onClick: onAction ?? (() => {}),
     },
   })
 }
 
 export function PWARegister() {
+  const deferredPrompt = useRef<BeforeInstallPromptEvent | null>(null)
+
   useEffect(() => {
     if (typeof window === 'undefined' || !('serviceWorker' in navigator)) return
     window.navigator.serviceWorker
@@ -61,35 +69,37 @@ export function PWARegister() {
 
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault()
-      showInstallHint(
-        'Puedes instalar Peso Planetario en tu dispositivo para usarlo como app.',
-      )
+      deferredPrompt.current = e as BeforeInstallPromptEvent
+
+      if (sessionStorage.getItem(INSTALL_HINT_KEY)) return
+      sessionStorage.setItem(INSTALL_HINT_KEY, '1')
+
+      toast.info('Instalable', {
+        description: 'Puedes instalar Peso Planetario como app en tu dispositivo.',
+        duration: 15000,
+        action: {
+          label: 'Instalar',
+          onClick: () => {
+            deferredPrompt.current?.prompt()
+          },
+        },
+      })
     }
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
 
-    // iOS/Safari no implementa beforeinstallprompt; solo permite "Añadir a inicio" manualmente.
     if (isIOS()) {
       const timer = window.setTimeout(() => {
-        showInstallHint(
-          'En Safari, tocá Compartir (□↑) y elegí "Añadir a la pantalla de inicio".',
-        )
-      }, 2000)
-      return () => {
-        window.clearTimeout(timer)
-        window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
-      }
-    }
-
-    // Android: si Chrome aún no dispara el evento (criterios de engagement), mostrar instrucciones.
-    if (isAndroid()) {
-      const timer = window.setTimeout(() => {
-        if (!sessionStorage.getItem(INSTALL_HINT_KEY)) {
+        if (isSafari()) {
           showInstallHint(
-            'En Chrome, abrí el menú (⋮) y elegí "Instalar aplicación" o "Añadir a la pantalla de inicio".',
+            'Tocá el botón Compartir (□↑) y elegí "Añadir a la pantalla de inicio".',
+          )
+        } else {
+          showInstallHint(
+            'Para instalar la app, abrila en Safari → Compartir (□↑) → "Añadir a la pantalla de inicio". Chrome en iOS no permite instalar PWAs.',
           )
         }
-      }, 4000)
+      }, 2000)
       return () => {
         window.clearTimeout(timer)
         window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
