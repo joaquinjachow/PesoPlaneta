@@ -8,6 +8,7 @@ import { Toaster } from '@/components/ui/sonner'
 import './globals.css'
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://peso-planeta.vercel.app'),
   title: {
     default: 'Peso Planetario | Calculadora de peso en otros planetas',
     template: '%s | Peso Planetario',
@@ -20,6 +21,16 @@ export const metadata: Metadata = {
     description: 'Descubre cuánto pesarías en diferentes planetas del sistema solar. Calculadora gratuita en español.',
     type: 'website',
     locale: 'es',
+    url: '/',
+    siteName: 'Peso Planetario',
+    images: [
+      {
+        url: '/opengraph-image',
+        width: 1200,
+        height: 630,
+        alt: 'Peso Planetario — Calculadora de peso en otros planetas',
+      },
+    ],
   },
   robots: {
     index: true,
