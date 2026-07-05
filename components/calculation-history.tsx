@@ -1,16 +1,15 @@
-"use client";
-import { CalculationHistoryProps } from '@/lib/types';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { History, Trash2, Clock } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
-import { es } from 'date-fns/locale';
+'use client'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { History, Trash2, Clock } from 'lucide-react'
+import { formatDistanceToNow } from 'date-fns'
+import { es } from 'date-fns/locale'
+import type { CalculationHistoryProps } from '@/lib/types'
+import { outlineButtonHoverClass } from '@/lib/ui-classes'
 
 export function CalculationHistory({ history, onClearHistory, formatWeight }: CalculationHistoryProps) {
-  if (history.length === 0) {
-    return null;
-  }
+  if (history.length === 0) return null
 
   return (
     <Card className="w-full">
@@ -24,15 +23,13 @@ export function CalculationHistory({ history, onClearHistory, formatWeight }: Ca
             variant="outline"
             size="sm"
             onClick={onClearHistory}
-            className="text-destructive hover:text-destructive hover:bg-slate-100 hover:border-slate-300 dark:hover:bg-white dark:hover:text-black dark:hover:border-black"
+            className={`text-destructive hover:text-destructive ${outlineButtonHoverClass}`}
           >
             <Trash2 className="h-4 w-4 mr-2" />
             Limpiar
           </Button>
         </div>
-        <CardDescription>
-          Tus últimos {history.length} cálculos
-        </CardDescription>
+        <CardDescription>Tus últimos {history.length} cálculos</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-3 max-h-64 overflow-y-auto">
@@ -45,9 +42,9 @@ export function CalculationHistory({ history, onClearHistory, formatWeight }: Ca
                 <div className="flex items-center gap-2">
                   <Clock className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm text-muted-foreground">
-                    {formatDistanceToNow(calculation.timestamp, { 
-                      addSuffix: true, 
-                      locale: es 
+                    {formatDistanceToNow(calculation.timestamp, {
+                      addSuffix: true,
+                      locale: es,
                     })}
                   </span>
                 </div>
@@ -78,5 +75,5 @@ export function CalculationHistory({ history, onClearHistory, formatWeight }: Ca
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }
