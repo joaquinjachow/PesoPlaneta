@@ -1,14 +1,9 @@
 'use client'
-
 import { useEffect, useRef } from 'react'
 import { toast } from 'sonner'
+import type { BeforeInstallPromptEvent } from '@/lib/types'
 
 const INSTALL_HINT_KEY = 'pwa-install-hint-shown'
-
-interface BeforeInstallPromptEvent extends Event {
-  prompt(): Promise<void>
-  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>
-}
 
 function isStandalone(): boolean {
   return (
@@ -66,14 +61,11 @@ export function PWARegister() {
 
   useEffect(() => {
     if (typeof window === 'undefined' || isStandalone()) return
-
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault()
       deferredPrompt.current = e as BeforeInstallPromptEvent
-
       if (sessionStorage.getItem(INSTALL_HINT_KEY)) return
       sessionStorage.setItem(INSTALL_HINT_KEY, '1')
-
       toast.info('Instalable', {
         description: 'Puedes instalar Peso Planetario como app en tu dispositivo.',
         duration: 15000,
@@ -85,9 +77,7 @@ export function PWARegister() {
         },
       })
     }
-
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
-
     if (isIOS()) {
       const timer = window.setTimeout(() => {
         if (isSafari()) {
@@ -105,11 +95,9 @@ export function PWARegister() {
         window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
       }
     }
-
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
     }
   }, [])
-
   return null
 }

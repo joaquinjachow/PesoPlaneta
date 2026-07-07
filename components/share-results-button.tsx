@@ -4,14 +4,8 @@ import { Share2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { formatShareText, shareResults } from '@/lib/share-results'
-import type { WeightResult, WeightUnit } from '@/lib/types'
-
-interface ShareResultsButtonProps {
-  inputWeight: number
-  unit: WeightUnit
-  results: WeightResult[]
-  formatWeight: (weight: number, unit: WeightUnit) => string
-}
+import type { ShareResultsButtonProps } from '@/lib/types'
+import { outlineButtonHoverClass } from '@/lib/ui-classes'
 
 export function ShareResultsButton({
   inputWeight,
@@ -46,7 +40,7 @@ export function ShareResultsButton({
     <Button
       type="button"
       variant="outline"
-      className="gap-2 dark:hover:bg-white dark:hover:text-black dark:hover:border-black"
+      className={`gap-2 ${outlineButtonHoverClass}`}
       onClick={handleShare}
       disabled={isSharing || results.length === 0}
     >

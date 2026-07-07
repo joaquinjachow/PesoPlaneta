@@ -1,22 +1,27 @@
-"use client";
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Filter, RotateCcw } from "lucide-react";
-import { CompactPlanetFiltersProps } from "@/lib/types";
-import { PLANETS } from "@/lib/constants";
+'use client'
+import { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Filter, RotateCcw } from 'lucide-react'
+import { PLANETS } from '@/lib/constants'
+import type { CompactPlanetFiltersProps } from '@/lib/types'
+import { outlineButtonHoverClass } from '@/lib/ui-classes'
 
-export function CompactPlanetFilters({ filters, onFilterChange, onResetFilters }: CompactPlanetFiltersProps) {
-  const [open, setOpen] = useState(false);
-  const selectedCount = Object.values(filters).filter(Boolean).length;
-  const totalCount = PLANETS.length;
+export function CompactPlanetFilters({
+  filters,
+  onFilterChange,
+  onResetFilters,
+}: CompactPlanetFiltersProps) {
+  const [open, setOpen] = useState(false)
+  const selectedCount = Object.values(filters).filter(Boolean).length
+  const totalCount = PLANETS.length
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="gap-2 dark:hover:bg-white dark:hover:text-black dark:hover:border-black">
+        <Button variant="outline" className={`gap-2 ${outlineButtonHoverClass}`}>
           <Filter className="h-4 w-4" />
           Filtros
           <Badge variant="secondary" className="ml-1">
@@ -36,12 +41,7 @@ export function CompactPlanetFilters({ filters, onFilterChange, onResetFilters }
                 Selecciona qué planetas mostrar en los resultados
               </DialogDescription>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={onResetFilters}
-              className="text-muted-foreground"
-            >
+            <Button variant="outline" size="sm" onClick={onResetFilters} className="text-muted-foreground">
               <RotateCcw className="h-4 w-4 mr-2" />
               Resetear
             </Button>
@@ -60,7 +60,7 @@ export function CompactPlanetFilters({ filters, onFilterChange, onResetFilters }
               />
               <label
                 htmlFor={planet.name}
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer flex items-center gap-2"
+                className="text-sm font-medium leading-none cursor-pointer flex items-center gap-2"
               >
                 <span className="text-lg">{planet.emoji}</span>
                 <span>{planet.name}</span>
@@ -70,5 +70,5 @@ export function CompactPlanetFilters({ filters, onFilterChange, onResetFilters }
         </div>
       </DialogContent>
     </Dialog>
-  );
+  )
 }
