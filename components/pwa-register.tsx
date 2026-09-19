@@ -46,11 +46,6 @@ export function PWARegister() {
     if (typeof window === 'undefined' || !('serviceWorker' in navigator)) return
     window.navigator.serviceWorker
       .register('/sw.js')
-      .then((reg) => {
-        if (process.env.NODE_ENV === 'development') {
-          console.log('[PWA] Service worker registrado:', reg.scope)
-        }
-      })
       .catch(() => {
         toast.error('No se pudo activar la app sin conexión', {
           description: 'La instalación offline no está disponible.',

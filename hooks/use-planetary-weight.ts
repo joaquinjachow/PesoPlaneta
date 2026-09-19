@@ -1,7 +1,7 @@
 'use client'
 import { useState, useCallback, useMemo, useEffect } from 'react'
 import type { WeightResult, WeightUnit, WeightCalculation, PlanetFilter, SortByOption, SortDirection } from '@/lib/types'
-import { PLANETS, WEIGHT_LIMITS } from '@/lib/constants'
+import { WEIGHT_LIMITS } from '@/lib/constants'
 import { toWeightInKg, convertPlanetWeight, convertInputWeight, buildResults, createCalculationId, validateWeightInput, formatPlanetWeight, getObjectComparison, createInitialPlanetFilters } from '@/lib/planetary-calculations'
 import { loadHistory, saveHistory, clearStoredHistory, prependHistoryEntry } from '@/lib/history-storage'
 
