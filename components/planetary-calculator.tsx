@@ -4,6 +4,7 @@ import type React from 'react'
 import { WeightInput } from '@/components/weight-input'
 import { ResultsGrid } from '@/components/results-grid'
 import { CalculationHistory } from '@/components/calculation-history'
+import { WeightSummaryCard } from '@/components/weight-summary-card'
 import { usePlanetaryWeight } from '@/hooks/use-planetary-weight'
 import { useLayoutKey } from '@/hooks/use-layout-key'
 
@@ -93,6 +94,13 @@ export function PlanetaryCalculator() {
             }
             onFilterChange={handleFilterChange}
             onResetFilters={resetFilters}
+            formatWeight={formatWeight}
+            getObjectComparison={getObjectComparison}
+          />
+          <WeightSummaryCard
+            inputWeight={weight}
+            unit={unit}
+            results={allResults}
             formatWeight={formatWeight}
             getObjectComparison={getObjectComparison}
           />
