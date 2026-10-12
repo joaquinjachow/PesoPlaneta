@@ -1,9 +1,10 @@
 'use client'
-import { useState, useCallback, useMemo, useEffect } from 'react'
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import type { WeightResult, WeightUnit, WeightCalculation, PlanetFilter, SortByOption, SortDirection } from '@/lib/types'
 import { WEIGHT_LIMITS } from '@/lib/constants'
 import { toWeightInKg, convertPlanetWeight, convertInputWeight, buildResults, createCalculationId, validateWeightInput, formatPlanetWeight, getObjectComparison, createInitialPlanetFilters } from '@/lib/planetary-calculations'
 import { loadHistory, saveHistory, clearStoredHistory, prependHistoryEntry } from '@/lib/history-storage'
+import { buildCalculationUrl } from '@/lib/share-results'
 
 export const usePlanetaryWeight = () => {
   const [weight, setWeight] = useState<number | null>(null)
@@ -15,10 +16,28 @@ export const usePlanetaryWeight = () => {
   const [sortBy, setSortBy] = useState<SortByOption>('weight')
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
   const [planetFilters, setPlanetFilters] = useState<PlanetFilter>(createInitialPlanetFilters)
+  const restoredSharedCalculation = useRef(false)
 
   useEffect(() => {
     setCalculationHistory(loadHistory())
     setHistoryLoaded(true)
+  }, [])
+
+  useEffect(() => {
+    if (restoredSharedCalculation.current || typeof window === 'undefined') return
+    restoredSharedCalculation.current = true
+
+    const searchParams = new URLSearchParams(window.location.search)
+    const sharedWeight = Number(searchParams.get('peso'))
+    const sharedUnit = searchParams.get('unidad')
+    if (sharedUnit !== 'kg' && sharedUnit !== 'lbs') return
+    if (!Number.isFinite(sharedWeight)) return
+    if (validateWeightInput(sharedWeight, sharedUnit) !== null) return
+
+    setWeight(sharedWeight)
+    setUnit(sharedUnit)
+    setResults(buildResults(toWeightInKg(sharedWeight, sharedUnit)))
+    setValidationError(null)
   }, [])
 
   useEffect(() => {
@@ -29,6 +48,13 @@ export const usePlanetaryWeight = () => {
   const applyCalculation = useCallback((inputWeight: number, currentUnit: WeightUnit) => {
     const newResults = buildResults(toWeightInKg(inputWeight, currentUnit))
     setResults(newResults)
+    if (typeof window !== 'undefined') {
+      window.history.replaceState(
+        window.history.state,
+        '',
+        buildCalculationUrl(inputWeight, currentUnit, window.location.origin),
+      )
+    }
     setCalculationHistory((prev) =>
       prependHistoryEntry(prev, {
         id: createCalculationId(inputWeight, currentUnit),

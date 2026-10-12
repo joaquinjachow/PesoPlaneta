@@ -2,6 +2,17 @@ import type { WeightResult, WeightUnit } from '@/lib/types'
 
 const APP_URL = 'https://peso-planeta.vercel.app'
 
+export function buildCalculationUrl(
+  inputWeight: number,
+  unit: WeightUnit,
+  origin = APP_URL,
+): string {
+  const url = new URL(origin)
+  url.searchParams.set('peso', String(inputWeight))
+  url.searchParams.set('unidad', unit)
+  return url.toString()
+}
+
 export function formatShareText(
   inputWeight: number,
   unit: WeightUnit,
@@ -12,7 +23,8 @@ export function formatShareText(
   const lines = results
     .map((result) => `${result.emoji} ${result.planet}: ${formatWeight(result.weight, unit)}`)
     .join('\n')
-  return `${header}${lines}\n\nCalculado con Peso Planetario — ${APP_URL}`
+  const origin = typeof window === 'undefined' ? APP_URL : window.location.origin
+  return `${header}${lines}\n\nAbrí tu cálculo: ${buildCalculationUrl(inputWeight, unit, origin)}`
 }
 
 export async function shareResults(text: string): Promise<'shared' | 'copied'> {
